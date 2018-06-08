@@ -1,6 +1,6 @@
 package model
 
-case class Task(val name: String);
+case class Task(var id: Option[Int], title: String, description: Option[String], completed: Boolean = false, deadline: Option[Long])
 
 object Task {
 
