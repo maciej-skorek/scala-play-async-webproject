@@ -2,6 +2,7 @@ package controllers
 
 import javax.inject.Inject
 
+import filters.{PhraseFilter, TaskFilter}
 import model.Task
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Json
@@ -9,6 +10,8 @@ import play.api.mvc._
 import play.modules.reactivemongo.{MongoController, ReactiveMongoApi, ReactiveMongoComponents}
 import repository.TaskRepoImpl
 import services.TaskService
+
+import scala.concurrent.Future
 
 
 
@@ -41,9 +44,14 @@ class TaskController @Inject()(components: ControllerComponents, val reactiveMon
       .map(result => Ok(result.ok.toString))(defaultExecutionContext)
   }
 
-  def findTaskByPhrase = TODO
+  def findTaskFiltered = Action.async { implicit request =>
+    val json = request.body.asJson.get
+    val filterList = json.as[List[TaskFilter]]
+    taskService.findFiltered(filterList)(defaultExecutionContext)
+      .map(result => Ok(Json.toJson(result)))(defaultExecutionContext)
+  }
 
-  def findDeadlineBeforeDate = TODO
-
-
+//  def getFilter = Action.async { implicit request =>
+//    Future[Result]{Ok(Json.toJson(new PhraseFilter("text")))}(defaultExecutionContext)
+//  }
 }

@@ -28,11 +28,6 @@ class TaskRepoImpl @Inject()(reactiveMongoApi: ReactiveMongoApi)(implicit ec: Ex
     return futureTaskList
   }
 
-  def select(selector: BSONDocument): Future[Option[Task]] = {
-    //    collection.find(selector).one[Task]
-    return null
-  }
-
   def update(selector: BSONDocument, update: Task): Future[WriteResult] =
     collection.flatMap(_.update(selector, update))
 
