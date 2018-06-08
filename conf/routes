@@ -2,10 +2,10 @@
 GET           /                    controllers.HomeController.index()
 
 # Task Controller
-GET           /api/task            controllers.TaskController.getTask()
-POST          /api/task            controllers.TaskController.postTask()
-PUT           /api/task            controllers.TaskController.putTask()
-DELETE        /api/task            controllers.TaskController.deleteTask()
+GET           /api/task            controllers.TaskController.find()
+POST          /api/task            controllers.TaskController.add()
+PUT           /api/task            controllers.TaskController.modify()
+DELETE        /api/task            controllers.TaskController.delete()
 
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file        controllers.Assets.at(path="/public", file)

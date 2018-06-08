@@ -33,18 +33,14 @@ class TaskRepoImpl @Inject()(reactiveMongoApi: ReactiveMongoApi)(implicit ec: Ex
     return null
   }
 
-  def update(selector: BSONDocument, update: BSONDocument): Future[WriteResult] = {
-    //    collection.update(selector, update)
-    return null
-  }
+  def update(selector: BSONDocument, update: Task): Future[WriteResult] =
+    collection.flatMap(_.update(selector, update))
 
   def remove(document: BSONDocument): Future[WriteResult] = {
-    //    collection.remove(document)
-    return null
+   collection.flatMap(_.remove(document))
   }
 
   def save(task: Task): Future[WriteResult] = {
-    //    collection.update(BSONDocument("_id" -> document.get("_id").getOrElse(BSONObjectID.generate)), document, upsert = true)
     return collection.flatMap(_.insert(task))
   }
 }

@@ -1,61 +1,49 @@
 package controllers
 
 import javax.inject.Inject
+
 import model.Task
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import play.api.mvc._
 import play.modules.reactivemongo.{MongoController, ReactiveMongoApi, ReactiveMongoComponents}
 import repository.TaskRepoImpl
+import services.TaskService
 
-import scala.concurrent.Future
 
 
 class TaskController @Inject()(components: ControllerComponents, val reactiveMongoApi: ReactiveMongoApi
                               ) extends AbstractController(components) with MongoController with ReactiveMongoComponents {
 
 
-  def taskRepo = new TaskRepoImpl(reactiveMongoApi)(defaultExecutionContext)
+  val taskRepo = new TaskRepoImpl(reactiveMongoApi)(defaultExecutionContext)
+  val taskService = new TaskService()(taskRepo);
 
-  var idCounter = 0 : Int
-
-  var tasks : List[Task] = List()
-
-  def getTask = Action{
-      Ok(Json.toJson(tasks))
+  def find = Action.async { implicit request =>
+    taskService.findAll.map(tasks => Ok(Json.toJson(tasks)))(defaultExecutionContext)
   }
 
-  def postTask = Action(parse.json){ request =>
-    val task: Task = Json.fromJson[Task](request.body).get
-    idCounter += 1
-    task.id = Some(idCounter)
-    tasks = task :: tasks
-    Ok(Json.toJson(task))
+  def add = Action.async { implicit request =>
+    val json = request.body.asJson.get
+    taskService.create(json.as[Task])
+    .map(result => Ok(result.ok.toString))(defaultExecutionContext)
   }
 
-  def putTask = Action(parse.json){ request =>
-    val task: Task = Json.fromJson[Task](request.body).get
-    val oldTask = tasks.find(_.id.contains(task.id.get)).get
-    tasks = tasks.updated(tasks.indexOf(oldTask), task)
-    Ok(Json.toJson(task))
+  def delete =  Action.async { implicit request =>
+    val json = request.body.asJson.get
+    taskService.delete(json.as[Task]._id)
+      .map(result => Ok(result.ok.toString))(defaultExecutionContext)
   }
 
-  //  def getTask = Action.async { implicit request =>
-//    taskRepo.find().map(tasks => {
-//      var result = Ok(Json.toJson(tasks))
-//      result.header.headers.+("Access-Control-Allow-Origin") //  +{"Access-Control-Allow-Origin": "true"}
-//      result
-//    })(defaultExecutionContext)
-//  }
+  def modify = Action.async { implicit request =>
+    val json = request.body.asJson.get
+    taskService.modify(json.as[Task])
+      .map(result => Ok(result.ok.toString))(defaultExecutionContext)
+  }
 
-//
-//
-//  def postTask = Action.async { implicit request =>
-//    taskRepo
-//      .save(Task(1, "Title1", "description1", false, 2L))
-//    .map(result => Ok(result.ok.toString))(defaultExecutionContext)
-//  }
+  def findTaskByPhrase = TODO
 
-  def deleteTask = TODO
+  def findDeadlineBeforeDate = TODO
+
 
 }

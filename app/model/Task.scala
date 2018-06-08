@@ -1,6 +1,8 @@
 package model
 
-case class Task(var id: Option[Int], title: String, description: Option[String], completed: Boolean = false, deadline: Option[Long])
+import play.api.libs.json.{JsValue, Writes}
+
+case class Task(var _id: Int, title: String, description: String, completed: Boolean = false, deadline: Long)
 
 object Task {
 
