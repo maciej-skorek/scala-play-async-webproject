@@ -26,9 +26,8 @@ class TaskService()(implicit repository: TaskRepoImpl) {
   def create(task: Task) = repository.save(task)
 
   def findFiltered(filters: List[TaskFilter])(implicit ec: ExecutionContext) = {
-    val tasks = this.findAll
-    filters.foreach(a => a.insertInto(tasks)(ec))
-    tasks
+    val filterChain = TaskFilter.buildFilterChain(filters)
+    this.findAll.map(list => list.filter(filterChain.matchFilter))
   }
 
 

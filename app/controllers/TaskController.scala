@@ -51,7 +51,4 @@ class TaskController @Inject()(components: ControllerComponents, val reactiveMon
       .map(result => Ok(Json.toJson(result)))(defaultExecutionContext)
   }
 
-//  def getFilter = Action.async { implicit request =>
-//    Future[Result]{Ok(Json.toJson(new PhraseFilter("text")))}(defaultExecutionContext)
-//  }
 }

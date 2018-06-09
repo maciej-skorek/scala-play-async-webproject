@@ -7,10 +7,11 @@ import play.api.libs.json.Json
 
 case class PhraseFilter(val pattern: String) extends TaskFilter{
 
+  override def matchFilter(task: Task): Boolean = {
+    task.title.matches(pattern) || task.description.matches(pattern)
+  }
 
-  override def matchFilter(task: Task): Boolean = super.matchFilter(task)
 }
 object PhraseFilter{
-  // Generates Writes and Reads for Task thanks to Json Macros
   implicit val phraseFilterFormat = Json.format[PhraseFilter]
 }

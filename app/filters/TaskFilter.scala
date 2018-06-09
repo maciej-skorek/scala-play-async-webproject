@@ -6,17 +6,21 @@ import play.api.libs.json._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait TaskFilter {
+class TaskFilter(var nextFilter: Option[TaskFilter] = None){
   val filterType = this.getClass.getSimpleName
-
-  def insertInto(tasks: Future[List[Task]])(implicit context: ExecutionContext): Unit = {
-    tasks.map(list => list.withFilter(this.matchFilter))
-  }
-
-  def matchFilter(task: Task) = true
+  def matchFilter(task: Task):Boolean = if (nextFilter.isEmpty) true else nextFilter.get.matchFilter(task)
 }
 
 object TaskFilter{
+
+  def setFilterTo(chain: TaskFilter, someFilter: Some[TaskFilter]): TaskFilter = {
+    chain.nextFilter = someFilter
+    someFilter.get
+  }
+
+  def buildFilterChain(filters: List[TaskFilter]):TaskFilter ={
+    filters.foldLeft(new TaskFilter){(chain,filter) => setFilterTo(chain,Some(filter))}
+  }
 
   implicit val reader = ( (JsPath \ "filterType").read[String] and (JsPath.json.pick) ).tupled.flatMap{ case (filterType, js) =>
     filterType match {
@@ -27,7 +31,7 @@ object TaskFilter{
   }
 
   implicit val writer: Writes[TaskFilter] = new Writes[TaskFilter] {
-    def writes(ins: TaskFilter): JsValue = ins match {
+    override def writes(ins: TaskFilter): JsValue = ins match {
       case a: PhraseFilter    => Json.toJson(a)(Json.writes[PhraseFilter])
       case b: DeadlineFilter  => Json.toJson(b)(Json.writes[DeadlineFilter])
       case _ => throw new IllegalStateException("Unknown TaskFilter")
