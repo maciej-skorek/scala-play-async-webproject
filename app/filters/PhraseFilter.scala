@@ -7,7 +7,7 @@ import play.api.libs.json.Json
 
 case class PhraseFilter(val pattern: String) extends TaskFilter{
 
-  override def matchFilter(task: Task): Boolean = {
+  override def matchFilterInternal(task: Task): Boolean = {
     task.title.matches(pattern) || task.description.matches(pattern)
   }
 

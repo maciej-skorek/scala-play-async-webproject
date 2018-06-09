@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.Inject
 
-import filters.{PhraseFilter, TaskFilter}
+import filters.{TaskFilter}
 import model.Task
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Json
@@ -10,8 +10,6 @@ import play.api.mvc._
 import play.modules.reactivemongo.{MongoController, ReactiveMongoApi, ReactiveMongoComponents}
 import repository.TaskRepoImpl
 import services.TaskService
-
-import scala.concurrent.Future
 
 
 
