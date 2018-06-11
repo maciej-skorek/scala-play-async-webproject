@@ -19,9 +19,9 @@ class TaskService()(implicit repository: TaskRepoImpl) {
   def findBeforeDeadline(date: Date) = {}
 
 
-  def delete(id: Int) = repository.remove(BSONDocument("_id" -> id))
+  def delete(id: String) = repository.remove(BSONDocument("id" -> id))
 
-  def modify(task: Task) = repository.update(BSONDocument("_id" -> task._id), task)
+  def modify(task: Task) = repository.update(BSONDocument("id" -> task.id), task)
 
   def create(task: Task) = repository.save(task)
 

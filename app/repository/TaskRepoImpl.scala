@@ -1,11 +1,12 @@
 package repository
 
 import javax.inject.Inject
+
 import model.Task
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.{Cursor, ReadPreference}
-import reactivemongo.bson.BSONDocument
+import reactivemongo.bson.{BSONDocument, BSONObjectID}
 import reactivemongo.play.json.ImplicitBSONHandlers._
 import reactivemongo.play.json.collection.JSONCollection
 
@@ -36,6 +37,7 @@ class TaskRepoImpl @Inject()(reactiveMongoApi: ReactiveMongoApi)(implicit ec: Ex
   }
 
   def save(task: Task): Future[WriteResult] = {
+    task.id = BSONObjectID.generate().stringify;
     return collection.flatMap(_.insert(task))
   }
 }

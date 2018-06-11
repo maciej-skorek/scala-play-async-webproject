@@ -32,7 +32,7 @@ class TaskController @Inject()(components: ControllerComponents, val reactiveMon
 
   def delete =  Action.async { implicit request =>
     val json = request.body.asJson.get
-    taskService.delete(json.as[Task]._id)
+    taskService.delete(json.as[Task].id)
       .map(result => Ok(result.ok.toString))(defaultExecutionContext)
   }
 

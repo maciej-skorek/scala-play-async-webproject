@@ -2,7 +2,7 @@ package model
 
 import play.api.libs.json.{JsValue, Writes}
 
-case class Task(var _id: Int, title: String, description: String, completed: Boolean = false, deadline: Long)
+case class Task(var id: String, title: String, description: String, completed: Boolean = false, deadline: Long)
 
 object Task {
 
