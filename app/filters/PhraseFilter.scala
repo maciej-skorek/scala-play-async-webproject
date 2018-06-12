@@ -1,17 +1,17 @@
 package filters
 
-import java.util.regex.Pattern
-
 import model.Task
 import play.api.libs.json.Json
 
-case class PhraseFilter(val pattern: String) extends TaskFilter{
+case class PhraseFilter(pattern: String) extends TaskFilter {
 
   override def matchFilterInternal(task: Task): Boolean = {
-    task.title.matches(pattern) || task.description.matches(pattern)
+    task.title.toLowerCase().contains(pattern.toLowerCase()) ||
+      task.description.toLowerCase().contains(pattern.toLowerCase())
   }
 
 }
-object PhraseFilter{
+
+object PhraseFilter {
   implicit val phraseFilterFormat = Json.format[PhraseFilter]
 }
