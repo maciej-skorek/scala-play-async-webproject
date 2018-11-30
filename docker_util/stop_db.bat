@@ -1,4 +1,4 @@
 @echo off
-docker stop recruiter_db 
+docker stop scala_task_db 
 PAUSE
 @echo on
